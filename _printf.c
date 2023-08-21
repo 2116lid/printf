@@ -29,12 +29,13 @@ int _printf(const char *format, ...)
 		{
 			len1 = pri_str(list);
 			i++;
-			len += (len1 - 1);
+			len += len1;
 		}
 		if (format[i] == '%' && format[i + 1] == '%')
 			_putchar('%');
-		len += 1;
+		len++;
 	}
+
 	va_end(list);
 	return (len);
 }
