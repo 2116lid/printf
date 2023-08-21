@@ -1,55 +1,40 @@
 #include "main.h"
 
+/**
+ * _printf - a function that produces output
+ * according to a format.
+ * @format: a character string.
+ * Return: -1 on failure and len on sucssess.
+ *
+ */
 int _printf(const char *format, ...)
 {
-	int count = 0;
-    va_list args;
-    va_start(args, format);
+	unsigned int i, len = 0, len1;
 
-    while (*format != '\0')
-    {
-        if (*format == '%')
-        {
-            format++;
+	va_list list;
 
-            switch (*format)
-            {
-                case 'c':
-                {
-                    int c = va_arg(args, int);
-                    putchar(c);
-                    count++;
-                    break;
-                }
-                case 's':
-                {
-                    char *str = va_arg(args, char *);
-                    while (*str != '\0')
-                    {
-                        putchar(*str);
-                        str++;
-                        count++;
-                    }
-                    break;
-                }
-                case '%':
-                {
-                    putchar('%');
-                    count++;
-                    break;
-                }
-            }
-        }
-        else
-        {
-            putchar(*format);
-            count++;
-        }
-
-        format++;
-    }
-
-    va_end(args);
-
-    return count;
+	if (format == NULL || (format[0] == '%' && format[1] == '\0'))
+		return (-1);
+	va_start(list, format);
+	for (i = 0; format[i] != '\0'; i++)
+	{
+		if (format[i] != '%')
+			_putchar(format[i]);
+		if (format[i] == '%' && format[i + 1] == 'c')
+		{
+			_putchar(va_arg(list, int));
+			i++;
+		}
+		if (format[i] == '%' && format[i + 1] == 's')
+		{
+			len1 = pri_str(list);
+			i++;
+			len += (len1 - 1);
+		}
+		if (format[i] == '%' && format[i + 1] == '%')
+			_putchar('%');
+		len += 1;
+	}
+	va_end(list);
+	return (len);
 }
