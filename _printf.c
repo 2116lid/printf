@@ -33,7 +33,7 @@ int _printf(const char *format, ...)
 		}
 		if (format[i] == '%' && format[i + 1] == '%')
 			_putchar('%');
-		len++;
+		len += 1;
 	}
 
 	va_end(list);
