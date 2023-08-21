@@ -20,18 +20,18 @@ int _printf(const char *format, ...)
 	{
 		if (format[i] != '%')
 			_putchar(format[i]);
-		if (format[i] == '%' && format[i + 1] == 'c')
+		else if (format[i + 1] == 'c')
 		{
 			_putchar(va_arg(list, int));
 			i++;
 		}
-		if (format[i] == '%' && format[i + 1] == 's')
+		else if (format[i + 1] == 's')
 		{
 			len1 = pri_str(list);
 			i++;
 			len += (len1 - 1);
 		}
-		if (format[i] == '%' && format[i + 1] == '%')
+		else if (format[i + 1] == '%')
 			_putchar('%');
 		len += 1;
 	}
