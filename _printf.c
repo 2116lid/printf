@@ -22,8 +22,9 @@ int _printf(const char *format, ...)
 			_putchar(format[i]);
 		else if (format[i + 1] == 'c')
 		{
-			_putchar(va_arg(list, int));
+			len1 = pri_ch(list);
 			i++;
+			len += len1;
 		}
 		else if (format[i + 1] == 's')
 		{
@@ -32,7 +33,11 @@ int _printf(const char *format, ...)
 			len += (len1 - 1);
 		}
 		else if (format[i + 1] == '%')
-			_putchar('%');
+		{
+			len1 = pri_37();
+			i++;
+			len += len1;
+		}
 		len += 1;
 	}
 
