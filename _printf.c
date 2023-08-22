@@ -1,4 +1,5 @@
 #include "main.h"
+#include <string.h>
 
 /**
  * _printf - a function that produces output
@@ -9,38 +10,42 @@
  */
 int _printf(const char *format, ...)
 {
-	unsigned int i, len = 0, len1;
-
+	new_t specifiers[] = {
+		{"%s", pri_str}, {"%c", pri_ch},
+		{"%%", pri_37}, {"%r", printf_srev}
+	};
 	va_list list;
+	unsigned int i = 0, j, len = 0;
 
+	va_start(list, format);
 	if (format == NULL || (format[0] == '%' && format[1] == '\0'))
 		return (-1);
-	va_start(list, format);
-	for (i = 0; format[i] != '\0'; i++)
+	while (format[i] != '\0')
 	{
-		if (format[i] != '%')
-			_putchar(format[i]);
-		else if (format[i + 1] == 'c')
+		if (format[i] == '%')
 		{
-			len1 = pri_ch(list);
 			i++;
-			len += len1;
-		}
-		else if (format[i + 1] == 's')
-		{
-			len1 = pri_str(list);
-			i++;
-			len += (len1 - 1);
-		}
-		else if (format[i + 1] == '%')
-		{
-			len1 = pri_37();
-			i++;
-			len += len1;
-		}
-		len += 1;
+			for (j = 0; specifiers[j].conv != NULL; j++)
+			{
+				if (strcmp(format + i,  specifiers[j].conv) == 0)
+				{
+					len += specifiers[j].func(list);
+					break;
+				}
+			}
+				if (specifiers[j].conv == NULL)
+				{
+					_putchar('%');
+					_putchar(format[i]);
+					len += 2;
+				}
+				i += strlen(specifiers[j].conv);
+			}
+			else
+			{
+				_putchar(format[i]);
+			} i++;
 	}
-
-	va_end(list);
-	return (len);
+		va_end(list);
+		return (len);
 }
