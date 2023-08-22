@@ -1,44 +1,66 @@
 #include "main.h"
-#include <string.h>
+
+void print_buffer(char buffer[], int *buff_ind);
 
 /**
- * _printf - a function that produces output
- * according to a format.
- * @format: a character string.
- * Return: -1 on failure and len on sucssess.
- *
+ * _printf - Printf function
+ * @format: format.
+ * Return: Printed chars.
  */
-int _printf(const char * const format, ...)
+int _printf(const char *format, ...)
 {
-	convert_match m[] = {
-		{"%s", pri_str}, {"%c", pri_ch},
-		{"%%", pri_37},	{"%i", printf_int},
-		{"%d", printDec}
-	};
+	int i, printed = 0, printed_chars = 0;
+	int flags, width, precision, size, buff_ind = 0;
 	va_list list;
-	unsigned int i = 0, j, len = 0;
+	char buffer[BUFF_SIZE];
+
+	if (format == NULL)
+		return (-1);
 
 	va_start(list, format);
-	if (format == NULL || (format[0] == '%' && format[1] == '\0'))
-		return (-1);
-back:
 
-	while (format[i] != '\0')
+	for (i = 0; format && format[i] != '\0'; i++)
 	{
-            for (j = 0; j < 6; j++)
-            {
-                if (m[j].id[0] == format[i] && m[j].id[1] == format[i + 1])
-                {
-                    len += m[j].f(list);
-                    i += 2;
-		    goto back;
-                }
-		j--;
-            }
-	    _putchar(format[i]);
-	    len++;
-	    i++;
-        }
-        va_end(list);
-        return (len);
+		if (format[i] != '%')
+		{
+			buffer[buff_ind++] = format[i];
+			if (buff_ind == BUFF_SIZE)
+				print_buffer(buffer, &buff_ind);
+			/* write(1, &format[i], 1);*/
+			printed_chars++;
+		}
+		else
+		{
+			print_buffer(buffer, &buff_ind);
+			flags = get_flags(format, &i);
+			width = get_width(format, &i, list);
+			precision = get_precision(format, &i, list);
+			size = get_size(format, &i);
+			++i;
+			printed = handle_print(format, &i, list, buffer,
+				flags, width, precision, size);
+			if (printed == -1)
+				return (-1);
+			printed_chars += printed;
+		}
+	}
+
+	print_buffer(buffer, &buff_ind);
+
+	va_end(list);
+
+	return (printed_chars);
+}
+
+/**
+ * print_buffer - Prints the contents of the buffer if it exist
+ * @buffer: Array of chars
+ * @buff_ind: Index at which to add next char, represents the length.
+ */
+void print_buffer(char buffer[], int *buff_ind)
+{
+	if (*buff_ind > 0)
+		write(1, &buffer[0], *buff_ind);
+
+	*buff_ind = 0;
 }
